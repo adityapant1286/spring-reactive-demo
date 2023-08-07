@@ -1,0 +1,16 @@
+spring:
+  webflux:
+    base-path: reactivedemo
+  application:
+    name: reactivedemo
+  profiles:
+    active: dev,test
+    default: dev
+springdoc:
+  swagger-ui:
+#    path: /swagger-doc/swagger-ui.html
+    use-root-path: true
+  api-docs:
+    groups:
+      enabled: true
+#    path: /swagger-doc/v3/api-docs
