@@ -27,6 +27,7 @@ ext {
     set('springBootAdminVersion', "3.1.1")
     set('springCloudVersion', "2022.0.3")
     set('springDocVersion', "1.7.0")
+    set('snakeYaml', "2.2")
     set('springDocWebfluxUiVersion', "2.1.0")
     set('junit5Version', "5.9.2")
 }
@@ -34,6 +35,8 @@ ext {
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-webflux"
     implementation "org.springdoc:springdoc-openapi-starter-webflux-ui:${springDocWebfluxUiVersion}"
+    implementation "org.yaml:snakeyaml:${snakeYaml}"
+
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
