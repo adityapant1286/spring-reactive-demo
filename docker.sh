@@ -1,4 +1,4 @@
-export JAVA_HOME="C:\Program Files\Java\jdk-18.0.2.1"
+export JAVA_HOME="C:\Program Files\Java\jdk20.0.2_10"
 
 export PATH=$JAVA_HOME/bin:$PATH
 

@@ -1,9 +1,9 @@
-FROM alpine:latest
+FROM alpine:3.18
 
 RUN apk --no-cache upgrade && \
     apk add --no-cache unzip
 
-ARG version=17.0.8.7.1
+ARG version=20.0.2.9.1
 
 # Please note that the THIRD-PARTY-LICENSE could be out of date if the base image has been updated recently.
 # The Corretto team will update this file but you may see a few days' delay.
@@ -15,8 +15,8 @@ RUN wget -O /THIRD-PARTY-LICENSES-20200824.tar.gz https://corretto.aws/downloads
     SHA_SUM="6cfdf08be09f32ca298e2d5bd4a359ee2b275765c09b56d514624bf831eafb91" && \
     echo "${SHA_SUM}  /etc/apk/keys/amazoncorretto.rsa.pub" | sha256sum -c - && \
     echo "https://apk.corretto.aws" >> /etc/apk/repositories && \
-    apk add --no-cache amazon-corretto-17=$version-r0 && \
-    rm -rf /usr/lib/jvm/java-17-amazon-corretto/lib/src.zip
+    apk add --no-cache amazon-corretto-20=$version-r0 && \
+    rm -rf /usr/lib/jvm/java-20-amazon-corretto/lib/src.zip
 
 
 ENV LANG C.UTF-8
@@ -25,21 +25,22 @@ ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 ENV PATH=$PATH:/usr/lib/jvm/default-jvm/bin
 
 ENV APP_NAME spring-reactive-demo
+ENV APP_ARTIFACT ${APP_NAME}-1.0.0-SNAPSHOT.jar
+
 ENV APPLICATION_FOLDER .
-ENV APP_HOME /usr/app
+ENV APP_HOME /app
+
+RUN mkdir $APP_HOME
+RUN addgroup --system javauser && adduser -S -s /bin/false -G javauser javauser
+
+
+ADD /${APPLICATION_FOLDER}/build/libs/*SNAPSHOT.jar ${APP_HOME}/${APP_ARTIFACT}
 
 EXPOSE 7070
 
 WORKDIR $APP_HOME
 
-#COPY build/libs/* /usr/app/app.jar
-ADD /${APPLICATION_FOLDER}/build/distributions/*.zip ${APP_HOME}/
-RUN unzip $APP_HOME/*.zip
-RUN rm -rf $APP_HOME/*.zip
+RUN chown -R javauser:javauser ${APP_HOME}
+USER javauser
 
-RUN chmod +x ${APP_NAME}-0.0.1-SNAPSHOT/bin/${APP_NAME}
-
-#CMD ["java", "-jar", "app.jar"]
-ENTRYPOINT ["sh", "-c"]
-#CMD ["sh ./${APP_NAME}"]
-CMD ["sh ${APP_NAME}-0.0.1-SNAPSHOT/bin/${APP_NAME}"]
+CMD ["sh", "-c", "java -jar $APP_ARTIFACT"]
